@@ -103,7 +103,7 @@ function stitched = stitchImages_tightROI(images, cameras, blendFeather, ref_idx
             stitched = uint8(accumulated ./ weight_sum);
         case 1
             % Blend images directly with feathering
-            kernel_size = 31;
+            kernel_size = 3;
             kernel = fspecial('gaussian', [kernel_size kernel_size], kernel_size/6);
             
             for i = 1:length(masks)

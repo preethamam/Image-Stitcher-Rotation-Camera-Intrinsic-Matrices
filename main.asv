@@ -26,27 +26,13 @@ clear; close all; clc;
 clcwaitbarz = findall(0,'type','figure','tag','TMWWaitbar');
 delete(clcwaitbarz);
 warning('off','all');
-
-%--------------------------------------------------------------------------
-% Parallel pools
-%--------------------------------------------------------------------------
-if(isempty(gcp('nocreate')))
-    if strcmp(input.poolType,'numcores')
-        parpool(input.numCores);
-    else
-        parpool('Threads')
-    end
-end
-
 Start = tic;
-warning('off','all')
 
 %% Get inputs
 %--------------------------------------------------------------------------
 % Inputs file
 %--------------------------------------------------------------------------
-referenceImageIndex = 4;    
-blendFeather = 0;
+blendFeather = 1;
 imagesFolder = 'images';
 
 %--------------------------------------------------------------------------
@@ -54,16 +40,12 @@ imagesFolder = 'images';
 %--------------------------------------------------------------------------
 load cameras.mat
 
-cameras_R = {cameras.R};
-A = cellfun(@sum(sum(x - eye(size(x,1)))), x, cameras_R);
-
-
 %% Read images
 [images, imageSizes, imageNames, numImgs] = loadImages(imagesFolder);
 
 %% Stitch images
 customrender = tic;
-panorama = stitchImages_tightROI(images, cameras, referenceImageIndex, blendFeather);
+panorama = stitchImages_tightROI(images, cameras, blendFeather);
 fprintf('Custom render: %f seconds\n', toc(customrender));
 % imwrite(panorama, 'pano_no_blending.png')
 

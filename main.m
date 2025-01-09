@@ -26,26 +26,13 @@ clear; close all; clc;
 clcwaitbarz = findall(0,'type','figure','tag','TMWWaitbar');
 delete(clcwaitbarz);
 warning('off','all');
-
-%--------------------------------------------------------------------------
-% Parallel pools
-%--------------------------------------------------------------------------
-if(isempty(gcp('nocreate')))
-    if strcmp(input.poolType,'numcores')
-        parpool(input.numCores);
-    else
-        parpool('Threads')
-    end
-end
-
 Start = tic;
-warning('off','all')
 
 %% Get inputs
 %--------------------------------------------------------------------------
 % Inputs file
 %--------------------------------------------------------------------------
-blendFeather = 0;
+blendFeather = 1;
 imagesFolder = 'images';
 
 %--------------------------------------------------------------------------
@@ -60,7 +47,7 @@ load cameras.mat
 customrender = tic;
 panorama = stitchImages_tightROI(images, cameras, blendFeather);
 fprintf('Custom render: %f seconds\n', toc(customrender));
-% imwrite(panorama, 'pano_no_blending.png')
+imwrite(panorama, 'assets/pano_feathering.png')
 
 %% Show panorama
 figure; 
