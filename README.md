@@ -15,7 +15,9 @@ For the full automatic panorama stitching functionality with feature extraction,
 | Feathering | 
 | ![pano_bbox](assets/pano_feathering.png) |
 
-The feathering does not help in a smooth blending. This is quite natural as the feathering algorithm intensifies the difference at the image boundaries. This feathering package is only for the demonstation purpose of trivial blending approach. The main objective of this package is to showcase the stitching capabilities given the Rotation (*R*) and Camera Intrinsics (*K*) matrices, which I did not find a viable solution anywhere in the internet. For the sophisticated blending such as gain compensation and multiband blending. Please refer to [AutoPanoStitch](https://github.com/preethamam/AutomaticPanoramicImageStitching-AutoPanoStitch) library.
+The feathering does not help in a smooth blending. This is quite natural as the feathering algorithm intensifies the difference at the image boundaries if the Gaussian filter size is large. Please feel free to tinker the input paraleters for the feather blending. This feathering package is only for the demonstration purpose of trivial blending approach. The main objective of this package is to showcase the stitching capabilities given the Rotation (*R*) and Camera Intrinsics (*K*) matrices, which I feel a nice addition of viable solution to the internet. For the sophisticated blending such as gain compensation and multiband blending. Please refer to [AutoPanoStitch](https://github.com/preethamam/AutomaticPanoramicImageStitching-AutoPanoStitch) library. 
+
+The sample dataset used in this package is the sub-set images selected from the [Adobe dataset](https://sourceforge.net/adobe/adobedatasets), `Carmel` folder.
 
 # Requirements
 MATLAB <br />
