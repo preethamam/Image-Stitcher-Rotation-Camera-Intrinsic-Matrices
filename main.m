@@ -47,7 +47,6 @@ load cameras.mat
 customrender = tic;
 panorama = stitchImages_tightROI(images, cameras, blendFeather);
 fprintf('Custom render: %f seconds\n', toc(customrender));
-imwrite(panorama, 'assets/pano_feathering.png')
 
 %% Show panorama
 figure; 
