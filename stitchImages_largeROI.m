@@ -129,7 +129,6 @@ function stitched = stitchImages_largeROI(images, cameras, blendFeather, ref_idx
     end
 end
 
-
 function warped = imWarp(image, tform, output_view, options)
     % Highly vectorized implementation of image warping
     % Args:
@@ -157,7 +156,7 @@ function warped = imWarp(image, tform, output_view, options)
     src_y = reshape(src_coords(2,:) ./ src_coords(3,:), out_height, out_width);
     
     % Initialize output
-    warped = zeros([out_height, out_width, num_channels], 'uint8') + options.fill_value;
+    warped = zeros([out_height, out_width, num_channels], class(image)) + options.fill_value;
     
     switch lower(options.method)
         case 'nearest'
@@ -261,7 +260,15 @@ function warped = imWarp(image, tform, output_view, options)
                 end
                 
                 % Process all channels simultaneously
-                img_reshaped = reshape(double(image), [], num_channels);
+                if isinteger(image)
+                    img_class = class(image);
+                    max_val = double(intmax(img_class));
+                    img_reshaped = reshape(double(image), [], num_channels); % Use double for better precision
+                else
+                    img_reshaped = reshape(double(image), [], num_channels);
+                    max_val = 1.0;
+                end
+                
                 warped_reshaped = reshape(warped, [], num_channels);
                 
                 % Get all sample points for all channels
@@ -269,13 +276,31 @@ function warped = imWarp(image, tform, output_view, options)
                 samples = reshape(samples, [], 4, 4, num_channels);
                 
                 % Apply bicubic interpolation using matrix operations
-                interp_vals = zeros(size(samples, 1), num_channels);
+                interp_vals = zeros(size(samples, 1), num_channels, 'double');
                 for c = 1:num_channels
                     temp = squeeze(samples(:,:,:,c));
-                    interp_vals(:,c) = sum(sum(y_weights .* reshape(temp, [], 4, 4) .* x_weights, 2), 3);
+                    % Reshape temp to handle all points correctly
+                    temp_reshaped = reshape(temp, [], 4, 4);
+                    
+                    % First interpolate in x direction
+                    x_interp = zeros(size(temp_reshaped, 1), 4, 'double');
+                    for i = 1:4
+                        for j = 1:4
+                            x_interp(:,j) = x_interp(:,j) + temp_reshaped(:,i,j) .* x_weights(:,i);
+                        end
+                    end
+                    
+                    % Then interpolate in y direction
+                    interp_vals(:,c) = sum(x_interp .* y_weights, 2);
                 end
                 
-                warped_reshaped(valid_linear, :) = uint8(max(0, min(255, interp_vals)));
+                % Handle output conversion
+                if isinteger(image)
+                    % For integer types, clamp to valid range
+                    interp_vals = max(0, min(max_val, round(interp_vals)));
+                end
+                
+                warped_reshaped(valid_linear, :) = cast(interp_vals, class(image));
                 warped = reshape(warped_reshaped, out_height, out_width, num_channels);
             end
     end
