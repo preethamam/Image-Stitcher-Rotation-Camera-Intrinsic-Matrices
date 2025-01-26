@@ -23,8 +23,8 @@ The sample dataset used in this package is the sub-set images selected from the 
 
 # Requirements
 MATLAB <br />
-MATLAB Image Processing Toolbox <br />
-MATLAB Parallel Computing Toolbox
+Image Processing Toolbox <br />
+Parallel Computing Toolbox
 
 # Feedback
 Please rate and provide feedback for the further improvements.
